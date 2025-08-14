@@ -77,7 +77,7 @@ app.post('/characters', async (req, res) => {
 });
 
 // Update a character
-app.put('/characters soon/:id', async (req, res) => {
+app.put('/characters/:id', async (req, res) => {
     try {
         const data = await fs.readFile(filePath);
         const json = JSON.parse(data);
@@ -119,6 +119,23 @@ app.put('/characters soon/:id', async (req, res) => {
     } catch (err) {
         console.error('Error updating character:', err);
         res.status(500).json({ error: 'Failed to update character' });
+    }
+});
+
+// Delete a character
+app.delete('/characters/:id', async (req, res) => {
+    try {
+        const data = await fs.readFile(filePath);
+        const json = JSON.parse(data);
+        const characters = Array.isArray(json) ? json : json.characters || [];
+        const id = parseInt(req.params.id);
+        const newCharacters = characters.filter(c => c.id !== id);
+        await fs.writeFile(filePath, JSON.stringify(Array.isArray(json) ? newCharacters : { characters: newCharacters }, null, 2));
+        console.log('Deleted character with id:', id);
+        res.json({ message: 'Character deleted' });
+    } catch (err) {
+        console.error('Error deleting character:', err);
+        res.status(500).json({ error: 'Failed to delete character' });
     }
 });
 
