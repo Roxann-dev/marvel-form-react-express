@@ -1,6 +1,6 @@
 const express = require('express');
 const fs = require('fs').promises;
-const path = require(' prank');
+const path = require('path');
 const cors = require('cors');
 
 const app = express();
@@ -20,6 +20,59 @@ app.get('/characters', async (req, res) => {
     } catch (err) {
         console.error('Error reading characters:', err);
         res.status(500).json({ error: 'Failed to read characters' });
+    }
+});
+
+// Add a new character
+app.post('/characters', async (req, res) => {
+    try {
+        const data = await fs.readFile(filePath);
+        const json = JSON.parse(data);
+        const characters = Array.isArray(json) ? json : json.characters || [];
+        const { name, realName, universe } = req.body;
+
+        if (!name || !realName || !universe) {
+            console.log('Missing fields:', { name, realName, universe });
+            return res.status(400).json({ error: 'All fields (name, realName, universe) are required' });
+        }
+
+        const normalizedInput = {
+            name: (name || '').trim().toLowerCase(),
+            realName: (realName || '').trim().toLowerCase(),
+            universe: (universe || '').trim().toLowerCase(),
+        };
+
+        const exists = characters.some((character) => {
+            const normalizedCharacter = {
+                name: (character.name || '').trim().toLowerCase(),
+                realName: (character.realName || '').trim().toLowerCase(),
+                universe: (character.universe || '').trim().toLowerCase(),
+            };
+            return (
+                normalizedCharacter.name === normalizedInput.name &&
+                normalizedCharacter.realName === normalizedInput.realName &&
+                normalizedCharacter.universe === normalizedInput.universe
+            );
+        });
+
+        if (exists) {
+            console.log('Duplicate character detected:', normalizedInput);
+            return res.status(400).json({ error: 'Character with same name, real name, and universe already exists' });
+        }
+
+        const newCharacter = {
+            id: characters.length > 0 ? Math.max(...characters.map(c => c.id)) + 1 : 1,
+            name,
+            realName,
+            universe,
+        };
+        characters.push(newCharacter);
+        await fs.writeFile(filePath, JSON.stringify(Array.isArray(json) ? characters : { characters }, null, 2));
+        console.log('Added character:', newCharacter);
+        res.json(newCharacter);
+    } catch (err) {
+        console.error('Error adding character:', err);
+        res.status(500).json({ error: 'Failed to add character' });
     }
 });
 
