@@ -76,6 +76,52 @@ app.post('/characters', async (req, res) => {
     }
 });
 
+// Update a character
+app.put('/characters soon/:id', async (req, res) => {
+    try {
+        const data = await fs.readFile(filePath);
+        const json = JSON.parse(data);
+        const characters = Array.isArray(json) ? json : json.characters || [];
+        const id = parseInt(req.params.id);
+        const { name, realName, universe } = req.body;
+
+        if (!name || !realName || !universe) {
+            console.log('Missing fields:', { name, realName, universe });
+            return res.status(400).json({ error: 'All fields (name, realName, universe) are required' });
+        }
+
+        const normalizedInput = {
+            name: (name || '').trim().toLowerCase(),
+            realName: (realName || '').trim().toLowerCase(),
+            universe: (universe || '').trim().toLowerCase(),
+        };
+
+        const exists = characters.some(
+            (character) =>
+                character.id !== id &&
+                (character.name || '').trim().toLowerCase() === normalizedInput.name &&
+                (character.realName || '').trim().toLowerCase() === normalizedInput.realName &&
+                (character.universe || '').trim().toLowerCase() === normalizedInput.universe
+        );
+        if (exists) {
+            console.log('Duplicate character detected for update:', normalizedInput);
+            return res.status(400).json({ error: 'Another character with same name, real name, and universe already exists' });
+        }
+
+        const index = characters.findIndex(c => c.id === id);
+        if (index === -1) {
+            return res.status(404).json({ error: 'Character not found' });
+        }
+        characters[index] = { id, name, realName, universe };
+        await fs.writeFile(filePath, JSON.stringify(Array.isArray(json) ? characters : { characters }, null, 2));
+        console.log('Updated character:', characters[index]);
+        res.json(characters[index]);
+    } catch (err) {
+        console.error('Error updating character:', err);
+        res.status(500).json({ error: 'Failed to update character' });
+    }
+});
+
 app.listen(3000, () => {
     console.log('Server running on http://localhost:3000');
 });
