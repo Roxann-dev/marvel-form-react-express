@@ -31,19 +31,19 @@ function CharacterTable({ characters, onEdit, onDelete }) {
                         <td className="border border-gray-300 p-2">{character.name}</td>
                         <td className="border border-gray-300 p-2">{character.realName}</td>
                         <td className="border border-gray-300 p-2">{character.universe}</td>
-                        <td className="border border-gray-300 p-2 flex gap-2">
+                        <td className="border border-gray-300 p-2 flex gap-2 flex flex-row justify-center">
                             <button
                                 onClick={() => {
                                     console.log('Editing character:', character);
                                     onEdit(character);
                                 }}
-                                className="bg-blue-500 text-white px-2 py-1 rounded"
+                                className="bg-blue-500 text-white px-2 py-1 rounded active:scale-95 active:brightness-90 active:shadow-md transition-transform duration-100"
                             >
                                 Update
                             </button>
                             <button
                                 onClick={() => deleteCharacter(character.id)}
-                                className="bg-red-500 text-white px-2 py-1 rounded"
+                                className="bg-red-500 text-white px-2 py-1 rounded active:scale-95 active:brightness-90 active:shadow-md transition-transform duration-100"
                             >
                                 Delete
                             </button>

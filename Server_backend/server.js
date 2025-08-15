@@ -9,7 +9,7 @@ app.use(express.json());
 
 const filePath = path.join(__dirname, 'characters.json');
 
-// Get all characters
+
 app.get('/characters', async (req, res) => {
     try {
         const data = await fs.readFile(filePath);
@@ -23,7 +23,7 @@ app.get('/characters', async (req, res) => {
     }
 });
 
-// Add a new character
+
 app.post('/characters', async (req, res) => {
     try {
         const data = await fs.readFile(filePath);
@@ -76,7 +76,7 @@ app.post('/characters', async (req, res) => {
     }
 });
 
-// Update a character
+
 app.put('/characters/:id', async (req, res) => {
     try {
         const data = await fs.readFile(filePath);
@@ -122,7 +122,7 @@ app.put('/characters/:id', async (req, res) => {
     }
 });
 
-// Delete a character
+
 app.delete('/characters/:id', async (req, res) => {
     try {
         const data = await fs.readFile(filePath);

@@ -96,10 +96,10 @@ function CharacterForm({ editingCharacter, setEditingCharacter, onSubmit }) {
                     className="w-full p-2 border border-gray-300 rounded"
                 />
                 <div className="flex gap-2">
-                    <button type="submit" className="bg-green-500 text-white px-4 py-2 rounded">
+                    <button type="submit" className="bg-green-500 text-white px-4 py-2 rounded active:scale-95 active:brightness-90 active:shadow-md transition-transform duration-100">
                         {editingCharacter ? 'Update' : 'Submit'}
                     </button>
-                    <button type="button" onClick={handleCancel} className="bg-gray-500 text-white px-4 py-2 rounded">
+                    <button type="button" onClick={handleCancel} className="bg-gray-500 text-white px-4 py-2 rounded active:scale-95 active:brightness-90 active:shadow-md transition-transform duration-100">
                         Cancel
                     </button>
                 </div>
